@@ -42,3 +42,20 @@ def format_reference_block(
                 lines.append(f" {locale}: {value}")
         blocks.append("\n".join(lines))
     return "\n\n".join(blocks)
+
+def format_items_block(
+        batch: list[dict[str, str]], #input.csv 裡面需要翻譯的那些 row（已經過濾掉 en:needs_review 的）
+        locale_columns: dict[str, str], #LOCALE_COLUMNS
+) -> str:
+    blocks = []
+    for id, item in enumerate(batch):
+        lines = [f"[{id}] Key: {item['key']}"]
+        for locale, column_name in locale_columns.items():
+            value = item.get(column_name, "")
+            if value:
+                lines.append(f" {locale}: {value}")
+            else:
+                lines.append(f" {locale}: ")
+        blocks.append("\n".join(lines))
+    return "\n\n".join(blocks)
+
