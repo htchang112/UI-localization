@@ -1,0 +1,470 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "account_view.button.log_in_another_account": {
+      "comment": "account_view.button.log_in_another_account",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Log in to another account"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "登录其他账号"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "登入其他帳號"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "登入其他帳戶"
+          }
+        }
+      }
+    },
+    "account_view.dialog_action.signup_again": {
+      "comment": "account_view.dialog_action.signup_again",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create new account"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "注册新帐号"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "註冊新帳號"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "註冊新帳戶"
+          }
+        }
+      }
+    },
+    "account_view.dialog_message.account_not_exist": {
+      "comment": "account_view.dialog_message.account_not_exist",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To ensure account security, accounts inactive for over a year with no activities are automatically removed.\nYou can create a new account to continue using our services."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "为确保账号安全，超过一年未使用、並且无活动记录的账号会被自动清除。\n你可以注册新账号，继续使用我们的服务。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "為確保帳號安全，超過一年未使用、並且無活動紀錄的帳號會被自動清除。\n你可以註冊新帳號，繼續使用我們的服務。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "為確保帳戶安全，超過一年未使用、並且無活動紀錄的帳戶會被自動清除。\n你可以註冊新帳戶，繼續使用我們的服務。"
+          }
+        }
+      }
+    },
+    "account_view.dialog_title.account_not_exist": {
+      "comment": "account_view.dialog_title.account_not_exist",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "We cannot find your account"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "抱歉，我们找不到这个账号"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "抱歉，我們找不到這個帳號"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "抱歉，我們找不到這個帳戶"
+          }
+        }
+      }
+    },
+    "account_view.sub_title.sign_up": {
+      "comment": "account_view.sub_title.sign_up",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Let's get you started."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加入会员，开始使用 Hikingbook"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加入會員，開始使用 Hikingbook"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "加入會員，開始使用 Hikingbook"
+          }
+        }
+      }
+    },
+    "account_view.subtitle.continue_this_account": {
+      "comment": "account_view.subtitle.continue_this_account",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue with this account?"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "继续使用此账号登录吗？"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "繼續使用此帳號登入嗎？"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "繼續使用此帳戶登入嗎？"
+          }
+        }
+      }
+    },
+    "account_view.terms_of_service_and_privacy_policy": {
+      "comment": "account_view.terms_of_service_and_privacy_policy",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "By continuing to use Hikingbook, you agree to our %@ and %@."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点击登录或继续，即表示你同意 Hikingbook 的%@和%@。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點擊登入或繼續，即表示你同意 Hikingbook 的%@和%@。"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "點擊登入或繼續，即表示你同意 Hikingbook 的%@和%@。"
+          }
+        }
+      }
+    },
+    "account_view.text_field_invalid_message.invalid_email": {
+      "comment": "account_view.text_field_invalid_message.invalid_email",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid email"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请输入有效的 Email"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請輸入有效的 Email"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請輸入有效的 Email"
+          }
+        }
+      }
+    },
+    "account_view.text_field_invalid_message.password_does_not_match": {
+      "comment": "Password is not match",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password does not match"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "密码不相符"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "密碼不相符"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "密碼不相符"
+          }
+        }
+      }
+    },
+    "account_view.text_field_invalid_message.please_enter_password_again": {
+      "comment": "account_view.text_field_invalid_message.please_enter_password_again",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please enter password again"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请再次输入密码"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請再次輸入密碼"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請再次輸入密碼"
+          }
+        }
+      }
+    },
+    "account_view.text.dont_have_an_account": {
+      "comment": "account_view.text.dont_have_an_account",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Don't have an account? "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有帐号吗？"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "還沒有帳號嗎？"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "還沒有帳戶嗎？"
+          }
+        }
+      }
+    },
+    "account_view.text.have_an_account": {
+      "comment": "account_view.text.have_an_account",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Have an account? "
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已经有帐号了吗？"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已經有帳號了嗎？"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已經有帳戶了嗎？"
+          }
+        }
+      }
+    },
+    "account_view.text.login_this_account": {
+      "comment": "account_view.text.login_this_account",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue with this account"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "继续登录此账号"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "繼續登入此帳號"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "繼續登入此帳戶"
+          }
+        }
+      }
+    },
+    "account_view.title.create_an_account": {
+      "comment": "account_view.title.create_an_account",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Join now"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "创建账号，"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "建立帳號，"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "建立帳戶，"
+          }
+        }
+      }
+    },
+    "account_view.title.start_your_first_activity": {
+      "comment": "account_view.title.start_your_first_activity",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "to start your"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "开始更安全的"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開始更安全的"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "開始更安全的"
+          }
+        }
+      }
+    },
+    "account_view.title.welcome_back": {
+      "comment": "account_view.title.welcome_back",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Great to see you again!"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "欢迎回来！"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "歡迎回來！"
+          }
+        },
+        "zh-HK": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "歡迎返嚟！"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.1"
+}
