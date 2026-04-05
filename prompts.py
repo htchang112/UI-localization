@@ -59,3 +59,75 @@ def format_items_block(
         blocks.append("\n".join(lines))
     return "\n\n".join(blocks)
 
+def build_prompt(
+        reference: list[dict[str, str]],
+        batch: list[dict[str, str]],
+        locale_columns: dict[str, str],
+) -> str:
+    reference_block = format_reference_block(reference, list(locale_columns.keys()))  
+    items_block = format_items_block(batch, locale_columns)
+    locale_needed = ", ".join(list(locale_columns.keys()))
+
+    return PROMPT_TEMPLATE.format(
+        reference_block = reference_block,
+        items_block = items_block,
+        locales_needed = locale_needed,
+    )
+
+
+if __name__ == "__main__":
+    # 模擬 locale_columns
+    locale_columns = {
+        "zh-Hant": "zh-Hant_value",
+        "zh-HK": "zh-HK_value",
+        "zh-Hans": "zh-Hans_value",
+        "en": "en_value",
+    }
+
+    # 模擬 references（從 reference.xcstrings 來的）
+    references = [
+        {
+            "key": "account_view.button.log_in_another_account",
+            "zh-Hant": "登入其他帳號",
+            "zh-HK": "登入其他帳戶",
+            "zh-Hans": "登录其他账号",
+            "en": "Log in to another account",
+        },
+        {
+            "key": "account_view.title.welcome_back",
+            "zh-Hant": "歡迎回來！",
+            "zh-HK": "歡迎返嚟！",
+            "zh-Hans": "欢迎回来！",
+            "en": "Great to see you again!",
+        },
+    ]
+
+    # 模擬 batch（從 input.csv 來的，注意欄位名有 _value）
+    batch = [
+        {
+            "key": "activity_detail_view.snackbar.feel_free_to_share_it_later",
+            "reason": "missing_localizations",
+            "en_value": "Activity saved. Share it whenever you're ready.",
+            "zh-Hant_value": "",
+            "zh-HK_value": "",
+            "zh-Hans_value": "",
+        },
+        {
+            "key": "activity_name_view.text.name_this_activity",
+            "reason": "en:needs_review",
+            "en_value": "Name your activity",
+            "zh-Hant_value": "為你的活動命名",
+            "zh-HK_value": "",
+            "zh-Hans_value": "",
+        },
+    ]
+
+    # 測試每個 function
+    print("=== Reference Block ===")
+    print(format_reference_block(references, list(locale_columns.keys())))
+
+    print("\n=== Items Block ===")
+    print(format_items_block(batch, locale_columns))
+
+    print("\n=== Full Prompt ===")
+    print(build_prompt(references, batch, locale_columns))
