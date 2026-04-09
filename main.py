@@ -2,6 +2,8 @@ import csv
 import json
 import time
 import re
+import sys
+import os
 from google import genai
 from dotenv import load_dotenv
 
@@ -72,8 +74,37 @@ def call_gemini(prompt: str, api_key: str, retries: int = 3) -> list[dict]:
 
 # 4. Process batch
 def localize_rows(rows: list, references: list, api_key: str, batch_size: int = 10) -> list:
-    results = 
-    return
+    results = [dict(r) for r in rows]
+
+    to_translate_indices = [
+        i for i, r in enumerate(rows)
+        if r.get("reason", "").strip() != SKIP_REASON
+    ]
+    skipped = len(rows) - len(to_translate_indices)
+    print(f"  → {len(to_translate_indices)} rows to localize, {skipped} skipped (en:needs_review)")
+
+    for batch_start in range(0, len(to_translate_indices), batch_size):
+        batch_idx = to_translate_indices[batch_start: batch_start + batch_size]
+        batch_rows = [rows[i] for i in batch_idx]
+
+        print(f"  → Translating rows {batch_start+1}–{batch_start+len(batch_idx)} …")
+        prompt = build_prompt(references, batch_rows, locale_columns=LOCALE_COLUMNS)
+        translations = call_gemini(prompt, api_key)
+
+        trans_map = {t["index"]: t for t in translations}
+        for local_i, global_i in enumerate(batch_idx):
+            t = trans_map.get(local_i)
+            if not t:
+                print(f"No translation for index {local_i} (key: {batch_rows[local_i]['key']})")
+                continue
+            for locale, col in LOCALE_COLUMNS.items():
+                if col in results[global_i]:
+                    results[global_i][col] = t.get(locale, results[global_i].get(col, ""))
+
+        if batch_start + batch_size < len(to_translate_indices):
+            time.sleep(2)
+
+    return results
 
 # 5. write output.csv
 def write_output_csv(rows: list, fieldnames: list, path: str):
@@ -84,4 +115,21 @@ def write_output_csv(rows: list, fieldnames: list, path: str):
     print(f"Output file saved: {path}")
 
 # --- Main ---
+def main():
+    xcstrings_path, input_csv_path = sys.argv[1], sys.argv[2]
+    api_key = os.getenv("GEMINI_API_KEY")
 
+    references = load_xcstring(xcstrings_path)
+    print(f"   {len(references)} reference strings loaded.")
+
+    rows, fieldnames = load_input_csv(input_csv_path)
+    print(f"   {len(rows)} rows loaded.")
+
+    print("Calling Gemini for localization...")
+    localized = localize_rows(rows, references, api_key)
+
+    write_output_csv(localized, fieldnames, "output.csv")
+    print("result have saved in output.csv")
+
+if __name__ == "main":
+    main()
