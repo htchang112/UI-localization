@@ -12,10 +12,6 @@ from prompts import build_prompt
  
 load_dotenv()
 
-# interavtive python 測試輸入
-XCSTRINGS_PATH = "reference.xcstrings"
-INPUT_CSV_PATH = "input.csv"
-
 # --- Constants ---
 LOCALE_COLUMNS = {
     "zh-Hant": "zh-Hant_value",
@@ -73,42 +69,39 @@ def call_gemini(prompt: str, api_key: str, retries: int = 3) -> list[dict]:
 
 
 # 4. Process batch
-def localize_rows(rows: list, references: list, api_key: str, batch_size: int = 10) -> list:
+def localize_rows(rows, references, api_key, batch_size=10):
     results = [dict(r) for r in rows]
 
-    to_translate_indices = [
-        i for i, r in enumerate(rows)
-        if r.get("reason", "").strip() != SKIP_REASON
-    ]
-    skipped = len(rows) - len(to_translate_indices)
-    print(f"  → {len(to_translate_indices)} rows to localize, {skipped} skipped (en:needs_review)")
+    for batch_start in range(0, len(rows), batch_size):
+        batch_rows = rows[batch_start: batch_start + batch_size]
+        print(f"  → Translating rows {batch_start+1}–{batch_start+len(batch_rows)} …")
 
-    for batch_start in range(0, len(to_translate_indices), batch_size):
-        batch_idx = to_translate_indices[batch_start: batch_start + batch_size]
-        batch_rows = [rows[i] for i in batch_idx]
-
-        print(f"  → Translating rows {batch_start+1}–{batch_start+len(batch_idx)} …")
         prompt = build_prompt(references, batch_rows, locale_columns=LOCALE_COLUMNS)
         translations = call_gemini(prompt, api_key)
 
         trans_map = {t["index"]: t for t in translations}
-        for local_i, global_i in enumerate(batch_idx):
+        for local_i, row in enumerate(batch_rows):
+            global_i = batch_start + local_i
             t = trans_map.get(local_i)
             if not t:
-                print(f"No translation for index {local_i} (key: {batch_rows[local_i]['key']})")
                 continue
-            for locale, col in LOCALE_COLUMNS.items():
-                if col in results[global_i]:
-                    results[global_i][col] = t.get(locale, results[global_i].get(col, ""))
 
-        if batch_start + batch_size < len(to_translate_indices):
+            for locale, col in LOCALE_COLUMNS.items():
+                if col not in results[global_i]:
+                    continue
+                # 關鍵：en:needs_review 的 row，en 欄位保持原值不動
+                if row.get("reason", "").strip() == SKIP_REASON and locale == "en":
+                    continue
+                results[global_i][col] = t.get(locale, results[global_i].get(col, ""))
+
+        if batch_start + batch_size < len(rows):
             time.sleep(2)
 
     return results
 
 # 5. write output.csv
 def write_output_csv(rows: list, fieldnames: list, path: str):
-    with open(path, "w", encoding="utf-8") as f:
+    with open(path, "w", encoding="utf-8-sig") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
@@ -116,8 +109,15 @@ def write_output_csv(rows: list, fieldnames: list, path: str):
 
 # --- Main ---
 def main():
+    if len(sys.argv) != 3:
+        print("Usage: python3 main.py reference.xcstrings input.csv")
+        sys.exit(1)
     xcstrings_path, input_csv_path = sys.argv[1], sys.argv[2]
-    api_key = os.getenv("GEMINI_API_KEY")
+    
+    api_key = os.getenv("GEMINI_API_KEY")    
+    if not api_key:
+        print("GEMINI_API_KEY not set. Add it to your .env file.")
+        sys.exit(1)
 
     references = load_xcstring(xcstrings_path)
     print(f"   {len(references)} reference strings loaded.")
@@ -129,7 +129,6 @@ def main():
     localized = localize_rows(rows, references, api_key)
 
     write_output_csv(localized, fieldnames, "output.csv")
-    print("result have saved in output.csv")
 
-if __name__ == "main":
+if __name__ == "__main__":
     main()
