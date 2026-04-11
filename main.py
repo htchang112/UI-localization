@@ -21,7 +21,8 @@ LOCALE_COLUMNS = {
     "en": "en_value",
 }
 SKIP_REASON = "en:needs_review"
-MODEL_NAME = "gemini-3-flash-preview" #選擇這個模型的原因是因為這是最新一代的當中，專為文字的輕量模型。
+MODEL_NAME = "gemini-3-flash-preview"
+BATCH_SIZE = 10
 
 
 # --- Functions ---
@@ -49,7 +50,7 @@ def load_input_csv(path: str) -> tuple[list[dict[str, str]], list[str]]:
         rows = list(reader)
     return rows, fieldnames
 
-# 3. Call API — 新增 system_instruction 參數
+# 3. Call API
 def call_gemini(prompt: str, api_key: str, retries: int = 3) -> list[dict]:
     client = genai.Client(api_key=api_key)
     for attempt in range(retries):
@@ -60,7 +61,7 @@ def call_gemini(prompt: str, api_key: str, retries: int = 3) -> list[dict]:
                 config=types.GenerateContentConfig(
                     system_instruction=SYSTEM_INSTRUCTION,
                     response_mime_type="application/json",
-                    temperature=1,
+                    temperature=0.3,
                 ),
             )
             text = response.text.strip()
@@ -75,7 +76,7 @@ def call_gemini(prompt: str, api_key: str, retries: int = 3) -> list[dict]:
 
 
 # 4. Process batch
-def localize_rows(rows, references, api_key, batch_size=10):
+def localize_rows(rows, references, api_key, batch_size=BATCH_SIZE):
     results = [dict(r) for r in rows]
 
     for batch_start in range(0, len(rows), batch_size):

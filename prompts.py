@@ -25,13 +25,11 @@ You are precise, consistent, and always match the brand's established tone.
 - Use "你" (not "您") for addressing users
 - If a locale value is marked [LOCKED], you MUST return it exactly as-is. Do not modify, rephrase, or "improve" locked values.
 - zh-HK MUST differ from zh-Hant where Hong Kong Cantonese conventions apply.
-- NEVER perform word-to-word translation. Rewrite the source into a locale-appropriate UI string.
-- Action first for 
+- NEVER perform word-to-word translation. Rewrite the source by meaning and context into a locale-appropriate UI string.
 </constraints>
 
 <glossary>
 These terms MUST be translated exactly as specified — no synonyms, no paraphrasing:
-
 | English             | zh-Hant        | zh-HK          | zh-Hans        |
 |---------------------|----------------|-----------------|---------------|
 | 3D flyover video    | 3D鳥瞰影片      | 3D鳥瞰影片        |3D鸟瞰视频      |
@@ -86,7 +84,7 @@ Expected output:
 </example>
 
 <items>
-Now translate the following items for ALL locales ({locales_needed}).
+Now translate the following items ({locales_needed}).
 
 {items_block}
 </items>'''
@@ -96,7 +94,6 @@ def format_reference_block(
     references: list[dict[str, str]],
     locales: list[str],
 ) -> str:
-    """將 reference.xcstrings 的翻譯格式化為 prompt 中的參考區塊。"""
     blocks = []
     for ref in references:
         lines = [f"Key: {ref['key']}"]
@@ -113,11 +110,6 @@ def format_items_block(
     locale_columns: dict[str, str],
     skip_reason: str = "en:needs_review",
 ) -> str:
-    """將待翻譯的 rows 格式化為 prompt 中的任務區塊。
-    
-    若 row 的 reason == skip_reason，在 en 值後面標註 [LOCKED]，
-    讓模型知道該欄位不可修改。
-    """
     blocks = []
     for idx, item in enumerate(batch):
         lines = [f"[{idx}] Key: {item['key']}"]
@@ -138,7 +130,6 @@ def build_prompt(
     batch: list[dict[str, str]],
     locale_columns: dict[str, str],
 ) -> str:
-    """組合 user prompt（不含 system instruction，system instruction 應透過 API 參數傳入）。"""
     reference_block = format_reference_block(reference, list(locale_columns.keys()))
     items_block = format_items_block(batch, locale_columns)
     locales_needed = ", ".join(list(locale_columns.keys()))

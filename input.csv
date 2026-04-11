@@ -1,5 +1,5 @@
 file_path,key,reason,zh-Hant_state,zh-Hant_value,zh-HK_state,en_value,zh-HK_value,zh-Hans_state,zh-Hans_value,en_state
-Hikingbook/Resources/Localizable/Localizable.xcstrings,activity_detail_view.snackbar.feel_free_to_share_it_later,missing_localizations,missing,,missing,Activity saved. Share it whenever you’re ready.,,missing,,missing
+Hikingbook/Resources/Localizable/Localizable.xcstrings,activity_detail_view.snackbar.feel_free_to_share_it_later,missing_localizations,missing,,missing,Activity saved. Share it whenever youre ready.,,missing,,missing
 Hikingbook/Resources/Localizable/Localizable.xcstrings,activity_name_view.text.name_this_activity,en:needs_review,translated,,translated,Name your activity,,translated,,needs_review
 Hikingbook/Resources/Localizable/Localizable.xcstrings,activity_name_view.text.your_activity_deserves_a_unique_name,en:needs_review,translated,,translated,Makes it easier to find and share later.,,translated,,needs_review
 Hikingbook/Resources/Localizable/Localizable.xcstrings,activity_other_formats_share_view.text.activity_files,missing_localizations,missing,,missing,Export,,missing,,missing
