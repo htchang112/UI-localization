@@ -1,83 +1,146 @@
-PROMPT_TEMPLATE = '''
+# ──────────────────────────────────────────────
+# 優化重點（對照 Google Prompting Strategies）
+# ──────────────────────────────────────────────
+# 1. XML 標籤結構化  — 用 <reference>, <items>, <example> 等標籤清楚區隔 prompt 區塊
+# 2. Few-shot example — 提供一組完整的 input → output 範例，引導模型格式與語氣
+# 3. Locale 定義      — 明確定義每個 locale 的語言特性與差異（zh-HK vs zh-Hant）
+# 4. Format placeholder 保留規則 — 明確要求保留 %@, %d, %lld, \n 等佔位符
+# 5. System instruction 分離    — 穩定指令抽成 SYSTEM_INSTRUCTION，動態內容留在 user prompt
+# 6. Context-first 順序         — reference（context）放前面，task 放後面
+# ──────────────────────────────────────────────
+
+
+SYSTEM_INSTRUCTION = '''
 <role>
-You are a professional UI copywriter and localizer for a hiking app called Hikingbook.
-You provide accurate, natural-sounding, and short translations with the style: friendly, encouraging.
-<role>
+You are a professional UI copywriter and localizer for Hikingbook, a hiking and outdoor activity app.
+You translate short UI strings (buttons, labels, snackbars, dialogs) across four locales.
+You are precise, consistent, and always match the brand's established tone.
+</role>
 
-## 不應該全部匯入，抓幾個重點的範例就好 
-<reference>
-{reference_block}
-<reference>
+<brand_tone>
+- Friendly, encouraging, and concise
+- Use "你" (not "您") for addressing users
+- Keep UI strings short and actionable — avoid verbose or formal phrasing
+- Match the terminology and style found in the reference translations
+</brand_tone>
 
+<locale_definitions>
+- en: English — natural, polished UI copy. Use sentence case for titles and buttons.
+- zh-Hant: 繁體中文（台灣）— 台灣用語。例：帳號、登入、紀錄、註冊
+- zh-HK: 繁體中文（香港）— 香港用語，與台灣繁體有細微差異。例：帳戶（非帳號）、返嚟（非回來）
+- zh-Hans: 简体中文（中国大陆）— 大陆用语。例：账号、登录、记录、注册
+</locale_definitions>
 
-<task>
-For each item below, provide translations for ALL of these locales: {locales_needed}
-- If a locale value is already provided, you may improve/revise it if needed, OR keep it as-is
-- If a locale value is missing, provide a translation
-- For the "en" locale, ensure the English copy is polished and natural
-<task>
+<constraints>
+- MUST preserve all format specifiers exactly as-is: %@, %d, %lld, %1$@, %2$@, \\n, etc.
+- MUST preserve leading/trailing spaces or punctuation if present in the source string.
+- Only revise an existing translation if it has a grammar error, unnatural phrasing, or violates brand tone. Otherwise keep it unchanged.
+- Every locale MUST have a non-empty value in the output.
+- Translate for MEANING, not word-for-word. Adapt idioms and phrasing to what sounds natural in each locale.
 
+These terms MUST be translated exactly as specified — no synonyms, no paraphrasing:
 
-## Items to translate
-{items_block}
-
-<constrants>
-No explanation, no markdown, no extra text. Only the JSON array.
-<constrants>
+| English             | zh-Hant        | zh-HK          | zh-Hans        |
+|---------------------|----------------|-----------------|----------------|
+| 3D flyover video    | 3D鳥瞰影片      | 3D鳥瞰影片        |3D鸟瞰视频      |
+| waypoint            | 航點           | 航點             | 航点           |
+| trail-goers         | 山友           | 山友             | 山友           |
+| snapshot            | 快照           | 快照             | 快照           |
+</constraints>
 
 <output_format>
-Reply with ONLY a JSON array. Each element must have:
-  "index": (the number in brackets above),
+Reply with ONLY a valid JSON array. Each element must have:
+  "index": (integer matching the [N] bracket in the items),
   "en": "...",
   "zh-Hant": "...",
   "zh-HK": "...",
   "zh-Hans": "..."
-<output_format>'''
+
+No explanation, no markdown fences, no extra text. Only the raw JSON array.
+</output_format>'''
+
+
+USER_PROMPT_TEMPLATE = '''<reference>
+The following are existing approved translations for Hikingbook. Use them to learn the brand's tone, terminology, and locale-specific conventions. Do NOT translate these — they are for reference only.
+
+{reference_block}
+</reference>
+
+<example>
+Here is an example of the expected input and output format:
+
+Input:
+[0] Key: account_view.button.continue
+  en: Continue
+  zh-Hant: 
+  zh-HK: 
+  zh-Hans: 
+
+[1] Key: account_view.dialog_message.sync_warning
+  en: Your data will be synced to %@. Continue?
+  zh-Hant: 你的資料將同步至 %@。是否繼續？
+  zh-HK: 
+  zh-Hans: 
+
+Expected output:
+[{{"index": 0, "en": "Continue", "zh-Hant": "繼續", "zh-HK": "繼續", "zh-Hans": "继续"}}, {{"index": 1, "en": "Your data will be synced to %@. Continue?", "zh-Hant": "你的資料將同步至 %@。是否繼續？", "zh-HK": "你的資料將同步至 %@。是否繼續？", "zh-Hans": "你的数据将同步至 %@。是否继续？"}}]
+</example>
+
+<items>
+Now translate the following items for ALL locales ({locales_needed}).
+
+{items_block}
+</items>'''
 
 
 def format_reference_block(
-    references: list[dict[str, str]], #這邊輸入是 load_xcstring() 這個 function 的輸出，也就是一個 list，裡面每個元素都是一個 dict，格式像這樣 {"key": "some_key", "zh-Hant": "some translation", "zh-HK": "some translation", "zh-Hans": "some translation", "en": "some translation"}
-    locales: list[str], #這邊輸入應該是 LOCALE_COLUMNS 的 keys，也就是 ["zh-Hant", "zh-HK", "zh-Hans", "en"]
+    references: list[dict[str, str]],
+    locales: list[str],
 ) -> str:
+    """將 reference.xcstrings 的翻譯格式化為 prompt 中的參考區塊。"""
     blocks = []
     for ref in references:
         lines = [f"Key: {ref['key']}"]
         for locale in locales:
-            value = ref.get(locale, "") 
+            value = ref.get(locale, "")
             if value:
-                lines.append(f" {locale}: {value}")
+                lines.append(f"  {locale}: {value}")
         blocks.append("\n".join(lines))
     return "\n\n".join(blocks)
 
+
 def format_items_block(
-        batch: list[dict[str, str]], #input.csv 裡面需要翻譯的那些 row（已經過濾掉 en:needs_review 的）
-        locale_columns: dict[str, str], #LOCALE_COLUMNS
+    batch: list[dict[str, str]],
+    locale_columns: dict[str, str],
 ) -> str:
+    """將待翻譯的 rows 格式化為 prompt 中的任務區塊。"""
     blocks = []
-    for id, item in enumerate(batch):
-        lines = [f"[{id}] Key: {item['key']}"]
+    for idx, item in enumerate(batch):
+        lines = [f"[{idx}] Key: {item['key']}"]
         for locale, column_name in locale_columns.items():
             value = item.get(column_name, "")
             if value:
-                lines.append(f" {locale}: {value}")
+                lines.append(f"  {locale}: {value}")
             else:
-                lines.append(f" {locale}: ")
+                lines.append(f"  {locale}: ")
         blocks.append("\n".join(lines))
     return "\n\n".join(blocks)
 
-def build_prompt(
-        reference: list[dict[str, str]],
-        batch: list[dict[str, str]],
-        locale_columns: dict[str, str],
-) -> str:
-    reference_block = format_reference_block(reference, list(locale_columns.keys()))  
-    items_block = format_items_block(batch, locale_columns)
-    locale_needed = ", ".join(list(locale_columns.keys()))
 
-    return PROMPT_TEMPLATE.format(
-        reference_block = reference_block,
-        items_block = items_block,
-        locales_needed = locale_needed,
+def build_prompt(
+    reference: list[dict[str, str]],
+    batch: list[dict[str, str]],
+    locale_columns: dict[str, str],
+) -> str:
+    """組合 user prompt（不含 system instruction，system instruction 應透過 API 參數傳入）。"""
+    reference_block = format_reference_block(reference, list(locale_columns.keys()))
+    items_block = format_items_block(batch, locale_columns)
+    locales_needed = ", ".join(list(locale_columns.keys()))
+
+    return USER_PROMPT_TEMPLATE.format(
+        reference_block=reference_block,
+        items_block=items_block,
+        locales_needed=locales_needed,
     )
 
 
@@ -129,11 +192,8 @@ if __name__ == "__main__":
     ]
 
     # 測試每個 function
-    print("=== Reference Block ===")
-    print(format_reference_block(references, list(locale_columns.keys())))
+    print("=== System Instruction ===")
+    print(SYSTEM_INSTRUCTION)
 
-    print("\n=== Items Block ===")
-    print(format_items_block(batch, locale_columns))
-
-    print("\n=== Full Prompt ===")
+    print("\n=== User Prompt ===")
     print(build_prompt(references, batch, locale_columns))

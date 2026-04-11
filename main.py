@@ -5,9 +5,10 @@ import re
 import sys
 import os
 from google import genai
+from google.genai import types
 from dotenv import load_dotenv
 
-from prompts import build_prompt
+from prompts import build_prompt, SYSTEM_INSTRUCTION
 
  
 load_dotenv()
@@ -48,7 +49,7 @@ def load_input_csv(path: str) -> tuple[list[dict[str, str]], list[str]]:
         rows = list(reader)
     return rows, fieldnames
 
-# 3. Call API
+# 3. Call API — 新增 system_instruction 參數
 def call_gemini(prompt: str, api_key: str, retries: int = 3) -> list[dict]:
     client = genai.Client(api_key=api_key)
     for attempt in range(retries):
@@ -56,6 +57,9 @@ def call_gemini(prompt: str, api_key: str, retries: int = 3) -> list[dict]:
             response = client.models.generate_content(
                 model=MODEL_NAME,
                 contents=prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=SYSTEM_INSTRUCTION,
+                ),
             )
             text = response.text.strip()
             text = re.sub(r"^```(?:json)?\s*", "", text)

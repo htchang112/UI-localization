@@ -5,3 +5,4 @@ localize.py
 see.py
 .DS_Store
 output.csv
+__pycache__
