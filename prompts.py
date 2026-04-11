@@ -13,15 +13,13 @@
 SYSTEM_INSTRUCTION = '''
 <role>
 You are a professional UI copywriter and localizer for Hikingbook, a hiking and outdoor activity app.
-You translate short UI strings (buttons, labels, snackbars, dialogs) across four locales.
+You specialize in translating and polishing short UI strings (buttons, labels, snackbars, dialogs) across locales.
 You are precise, consistent, and always match the brand's established tone.
 </role>
 
 <brand_tone>
 - Friendly, encouraging, and concise
-- Use "你" (not "您") for addressing users
 - Keep UI strings short and actionable — avoid verbose or formal phrasing
-- Match the terminology and style found in the reference translations
 </brand_tone>
 
 <locale_definitions>
@@ -34,16 +32,17 @@ You are precise, consistent, and always match the brand's established tone.
 <constraints>
 - MUST preserve all format specifiers exactly as-is: %@, %d, %lld, %1$@, %2$@, \\n, etc.
 - MUST preserve leading/trailing spaces or punctuation if present in the source string.
-- Only revise an existing translation if it has a grammar error, unnatural phrasing, or violates brand tone. Otherwise keep it unchanged.
+- Preserve the existing locale value by default if it is present and non-empty, unless it contains an obvious error.
 - Every locale MUST have a non-empty value in the output.
-- Translate for MEANING, not word-for-word. Adapt idioms and phrasing to what sounds natural in each locale.
+- Use "你" (not "您") for addressing users
+- If a locale value is marked [LOCKED], you MUST return it exactly as-is. Do not modify, rephrase, or "improve" locked values.
 
 These terms MUST be translated exactly as specified — no synonyms, no paraphrasing:
 
 | English             | zh-Hant        | zh-HK          | zh-Hans        |
-|---------------------|----------------|-----------------|----------------|
+|---------------------|----------------|-----------------|---------------|
 | 3D flyover video    | 3D鳥瞰影片      | 3D鳥瞰影片        |3D鸟瞰视频      |
-| waypoint            | 航點           | 航點             | 航点           |
+| waypoint            | 紀錄點          | 紀錄點           | 记录点         |
 | trail-goers         | 山友           | 山友             | 山友           |
 | snapshot            | 快照           | 快照             | 快照           |
 </constraints>
@@ -82,8 +81,14 @@ Input:
   zh-HK: 
   zh-Hans: 
 
+[2] Key: activity_name_view.text.name_this_activity
+  en: Name your activity [LOCKED]
+  zh-Hant: 為你的活動命名
+  zh-HK: 
+  zh-Hans: 
+
 Expected output:
-[{{"index": 0, "en": "Continue", "zh-Hant": "繼續", "zh-HK": "繼續", "zh-Hans": "继续"}}, {{"index": 1, "en": "Your data will be synced to %@. Continue?", "zh-Hant": "你的資料將同步至 %@。是否繼續？", "zh-HK": "你的資料將同步至 %@。是否繼續？", "zh-Hans": "你的数据将同步至 %@。是否继续？"}}]
+[{{"index": 0, "en": "Continue", "zh-Hant": "繼續", "zh-HK": "繼續", "zh-Hans": "继续"}}, {{"index": 1, "en": "Your data will be synced to %@. Continue?", "zh-Hant": "你的資料將同步至 %@。是否繼續？", "zh-HK": "你的資料將同步至 %@。是否繼續？", "zh-Hans": "你的数据将同步至 %@。是否继续？"}}, {{"index": 2, "en": "Name your activity", "zh-Hant": "為你的活動命名", "zh-HK": "為你的活動命名", "zh-Hans": "为你的活动命名"}}]
 </example>
 
 <items>
@@ -112,15 +117,22 @@ def format_reference_block(
 def format_items_block(
     batch: list[dict[str, str]],
     locale_columns: dict[str, str],
+    skip_reason: str = "en:needs_review",
 ) -> str:
-    """將待翻譯的 rows 格式化為 prompt 中的任務區塊。"""
+    """將待翻譯的 rows 格式化為 prompt 中的任務區塊。
+    
+    若 row 的 reason == skip_reason，在 en 值後面標註 [LOCKED]，
+    讓模型知道該欄位不可修改。
+    """
     blocks = []
     for idx, item in enumerate(batch):
         lines = [f"[{idx}] Key: {item['key']}"]
+        is_en_locked = item.get("reason", "").strip() == skip_reason
         for locale, column_name in locale_columns.items():
             value = item.get(column_name, "")
+            suffix = " [LOCKED]" if locale == "en" and is_en_locked and value else ""
             if value:
-                lines.append(f"  {locale}: {value}")
+                lines.append(f"  {locale}: {value}{suffix}")
             else:
                 lines.append(f"  {locale}: ")
         blocks.append("\n".join(lines))
