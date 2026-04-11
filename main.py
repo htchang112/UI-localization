@@ -61,7 +61,7 @@ def call_gemini(prompt: str, api_key: str, retries: int = 3) -> list[dict]:
                 config=types.GenerateContentConfig(
                     system_instruction=SYSTEM_INSTRUCTION,
                     response_mime_type="application/json",
-                    temperature=0.3,
+                    temperature=0.5,
                 ),
             )
             text = response.text.strip()
