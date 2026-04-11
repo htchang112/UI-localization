@@ -1,15 +1,3 @@
-# ──────────────────────────────────────────────
-# 優化重點（對照 Google Prompting Strategies）
-# ──────────────────────────────────────────────
-# 1. XML 標籤結構化  — 用 <reference>, <items>, <example> 等標籤清楚區隔 prompt 區塊
-# 2. Few-shot example — 提供一組完整的 input → output 範例，引導模型格式與語氣
-# 3. Locale 定義      — 明確定義每個 locale 的語言特性與差異（zh-HK vs zh-Hant）
-# 4. Format placeholder 保留規則 — 明確要求保留 %@, %d, %lld, \n 等佔位符
-# 5. System instruction 分離    — 穩定指令抽成 SYSTEM_INSTRUCTION，動態內容留在 user prompt
-# 6. Context-first 順序         — reference（context）放前面，task 放後面
-# ──────────────────────────────────────────────
-
-
 SYSTEM_INSTRUCTION = '''
 <role>
 You are a professional UI copywriter and localizer for Hikingbook, a hiking and outdoor activity app.
@@ -36,6 +24,7 @@ You are precise, consistent, and always match the brand's established tone.
 - Every locale MUST have a non-empty value in the output.
 - Use "你" (not "您") for addressing users
 - If a locale value is marked [LOCKED], you MUST return it exactly as-is. Do not modify, rephrase, or "improve" locked values.
+- zh-HK MUST differ from zh-Hant where Hong Kong Cantonese conventions apply.
 
 These terms MUST be translated exactly as specified — no synonyms, no paraphrasing:
 
@@ -81,14 +70,14 @@ Input:
   zh-HK: 
   zh-Hans: 
 
-[2] Key: activity_name_view.text.name_this_activity
-  en: Name your activity [LOCKED]
-  zh-Hant: 為你的活動命名
+[2] Key: whats_new.description.share_feature
+  en: You can now share your activities with anyone.
+  zh-Hant: 
   zh-HK: 
   zh-Hans: 
 
 Expected output:
-[{{"index": 0, "en": "Continue", "zh-Hant": "繼續", "zh-HK": "繼續", "zh-Hans": "继续"}}, {{"index": 1, "en": "Your data will be synced to %@. Continue?", "zh-Hant": "你的資料將同步至 %@。是否繼續？", "zh-HK": "你的資料將同步至 %@。是否繼續？", "zh-Hans": "你的数据将同步至 %@。是否继续？"}}, {{"index": 2, "en": "Name your activity", "zh-Hant": "為你的活動命名", "zh-HK": "為你的活動命名", "zh-Hans": "为你的活动命名"}}]
+[{{"index": 0, "en": "Continue", "zh-Hant": "繼續", "zh-HK": "繼續", "zh-Hans": "继续"}}, {{"index": 1, "en": "Your data will be synced to %@. Continue?", "zh-Hant": "你的資料將同步至 %@。是否繼續？", "zh-HK": "你的資料將同步至 %@。是否繼續？", "zh-Hans": "你的数据将同步至 %@。是否继续？"}}, {{"index": 2, "en": "You can now share your activities with anyone.", "zh-Hant": "你現在可以和任何人分享你的活動。", "zh-HK": "你而家可以將活動分享畀任何人。", "zh-Hans": "你现在可以和任何人分享你的活动。"}}]
 </example>
 
 <items>
