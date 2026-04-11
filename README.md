@@ -118,4 +118,4 @@ UI keys encode context: `*.button.*` implies short, actionable text; `*.descript
 
 ## Maintainer
 
-Built as an internship project at [Hikingbook](https://hikingbook.net).
+Built as an internship interview project at [Hikingbook](https://hikingbook.net).
