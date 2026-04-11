@@ -142,7 +142,6 @@ def build_prompt(
 
 
 if __name__ == "__main__":
-    # 模擬 locale_columns
     locale_columns = {
         "zh-Hant": "zh-Hant_value",
         "zh-HK": "zh-HK_value",
@@ -150,7 +149,6 @@ if __name__ == "__main__":
         "en": "en_value",
     }
 
-    # 模擬 references（從 reference.xcstrings 來的）
     references = [
         {
             "key": "account_view.button.log_in_another_account",
@@ -168,7 +166,6 @@ if __name__ == "__main__":
         },
     ]
 
-    # 模擬 batch（從 input.csv 來的，注意欄位名有 _value）
     batch = [
         {
             "key": "activity_detail_view.snackbar.feel_free_to_share_it_later",
@@ -188,7 +185,6 @@ if __name__ == "__main__":
         },
     ]
 
-    # 測試每個 function
     print("=== System Instruction ===")
     print(SYSTEM_INSTRUCTION)
 
