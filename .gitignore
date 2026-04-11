@@ -1,9 +1,7 @@
 .env
 .uil_venv
-practice
-localize.py
-see.py
 .DS_Store
 output.csv
 __pycache__
 output
+practice
