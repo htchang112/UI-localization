@@ -68,7 +68,7 @@ def call_gemini(prompt: str, api_key: str, retries: int = 3) -> list[dict]:
             text = response.text.strip()
             text = re.sub(r"^```(?:json)?\s*", "", text)
             text = re.sub(r"\s*```$", "", text)
-            return json.loads(text)
+            return json.loads(text, strict=False)
         except Exception as e:
             print(f"Attempt {attempt+1} failed: {e}")
             if attempt < retries -1:
