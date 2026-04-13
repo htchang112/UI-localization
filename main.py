@@ -62,7 +62,7 @@ def call_gemini(prompt: str, api_key: str, retries: int = 3) -> list[dict]:
                 config=types.GenerateContentConfig(
                     system_instruction=SYSTEM_INSTRUCTION,
                     response_mime_type="application/json",
-                    temperature=0.3,
+                    temperature=1,
                 ),
             )
             text = response.text.strip()
@@ -97,7 +97,6 @@ def localize_rows(rows, references, api_key, batch_size=BATCH_SIZE):
             for locale, col in LOCALE_COLUMNS.items():
                 if col not in results[global_i]:
                     continue
-                # 關鍵：en:needs_review 的 row，en 欄位保持原值不動
                 if row.get("reason", "").strip() == SKIP_REASON and locale == "en":
                     continue
                 results[global_i][col] = t.get(locale, results[global_i].get(col, ""))
