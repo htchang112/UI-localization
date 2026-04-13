@@ -26,11 +26,11 @@ Copywriters can review the AI output directly in CSV — no manual first-draft w
 
 ```bash
 # Clone the repo
-git clone https://github.com/htchang112/UI-localization
-cd hikingbook-localization-tool
+git clone https://github.com/htchang112/UI-localization.git
+cd UI-localization
 
 # Install dependencies
-pip install google-genai python-dotenv
+pip install -r requirements.txt
 
 # Add your API key
 echo "GEMINI_API_KEY=your_key_here" > .env
@@ -80,6 +80,7 @@ Other columns (like `file_path`, `*_state`) are passed through unchanged.
 ├── prompts.py           # System instruction + prompt templates
 ├── reference.xcstrings  # Approved translations (brand tone reference)
 ├── input.csv            # Strings to localize
+├── requirements.txt     # Python dependencies
 └── .env                 # GEMINI_API_KEY (not committed)
 ```
 
