@@ -26,7 +26,7 @@ Copywriters can review the AI output directly in CSV — no manual first-draft w
 
 ```bash
 # Clone the repo
-git clone https://github.com/<your-username>/hikingbook-localization-tool.git
+git clone https://github.com/htchang112/UI-localization
 cd hikingbook-localization-tool
 
 # Install dependencies
